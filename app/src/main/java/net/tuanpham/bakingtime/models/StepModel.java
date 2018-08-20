@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -23,10 +24,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "videoURL",
     "thumbnailURL"
 })
-public class Step {
+public class StepModel {
 
     @JsonProperty("id")
-    private Integer id;
+    private int id;
     @JsonProperty("shortDescription")
     private String shortDescription;
     @JsonProperty("description")
@@ -38,13 +39,37 @@ public class Step {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public StepModel() {
+    }
+
+    /**
+     * 
+     * @param id
+     * @param shortDescription
+     * @param description
+     * @param videoURL
+     * @param thumbnailURL
+     */
+    public StepModel(int id, String shortDescription, String description, String videoURL, String thumbnailURL) {
+        super();
+        this.id = id;
+        this.shortDescription = shortDescription;
+        this.description = description;
+        this.videoURL = videoURL;
+        this.thumbnailURL = thumbnailURL;
+    }
+
     @JsonProperty("id")
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -96,6 +121,11 @@ public class Step {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("shortDescription", shortDescription).append("description", description).append("videoURL", videoURL).append("thumbnailURL", thumbnailURL).append("additionalProperties", additionalProperties).toString();
     }
 
 }

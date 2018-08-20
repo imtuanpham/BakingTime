@@ -4,28 +4,28 @@
     android:layout_height="match_parent"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    tools:context="com.example.android.android_me.ui.MainActivity">
+    tools:context="net.tuanpham.bakingtime.activities.RecipeActivity">
 
     <!--
     This layout is a two-pane layout for the master/detail flow.
     -->
 
-    <!-- The static MasterListFragment -->
     <fragment
-        android:id="@+id/master_list_fragment"
-        android:name="com.example.android.android_me.ui.MasterListFragment"
-        android:layout_width="400dp"
+        android:id="@+id/fm_recipe"
+        android:name="net.tuanpham.bakingtime.fragments.RecipeFragment"
+        android:layout_width="300dp"
         android:layout_height="match_parent" />
 
     <!-- A small divider -->
     <View
+        android:id="@+id/vw_two_pane_divider"
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray" />
 
     <!-- LinearLayout that arranges all three Android-Me body part images vertically -->
     <LinearLayout
-        android:id="@+id/android_me_linear_layout"
+        android:id="@+id/ll_recipe_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -35,27 +35,6 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
-
-        <!-- Three vertically arranged body part fragments - the frame layouts are containers -
-        one for each Android-Me part (head, body, legs) -->
-
-        <FrameLayout
-            android:id="@+id/head_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside"/>
-
-        <FrameLayout
-            android:id="@+id/body_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside"/>
-
-        <FrameLayout
-            android:id="@+id/leg_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside"/>
 
 
     </LinearLayout>

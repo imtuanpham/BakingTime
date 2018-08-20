@@ -4,7 +4,6 @@
 
     Generated from http://www.jsonschema2pojo.org/
  */
-
 package net.tuanpham.bakingtime.models;
 
 import java.util.HashMap;
@@ -15,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -22,10 +22,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "measure",
     "ingredient"
 })
-public class Ingredient {
+public class IngredientModel {
 
     @JsonProperty("quantity")
-    private Integer quantity;
+    private double quantity;
     @JsonProperty("measure")
     private String measure;
     @JsonProperty("ingredient")
@@ -33,13 +33,33 @@ public class Ingredient {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public IngredientModel() {
+    }
+
+    /**
+     * 
+     * @param measure
+     * @param ingredient
+     * @param quantity
+     */
+    public IngredientModel(double quantity, String measure, String ingredient) {
+        super();
+        this.quantity = quantity;
+        this.measure = measure;
+        this.ingredient = ingredient;
+    }
+
     @JsonProperty("quantity")
-    public Integer getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
     @JsonProperty("quantity")
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 
@@ -71,6 +91,11 @@ public class Ingredient {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("quantity", quantity).append("measure", measure).append("ingredient", ingredient).append("additionalProperties", additionalProperties).toString();
     }
 
 }

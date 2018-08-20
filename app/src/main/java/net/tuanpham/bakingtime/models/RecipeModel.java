@@ -7,6 +7,7 @@
 
 package net.tuanpham.bakingtime.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -26,30 +28,56 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "servings",
     "image"
 })
-public class Recipe {
+public class RecipeModel {
 
     @JsonProperty("id")
-    private Integer id;
+    private int id;
     @JsonProperty("name")
     private String name;
     @JsonProperty("ingredients")
-    private List<Ingredient> ingredients = null;
+    private List<IngredientModel> ingredientModels = new ArrayList<IngredientModel>();
     @JsonProperty("steps")
-    private List<Step> steps = null;
+    private List<StepModel> stepModels = new ArrayList<StepModel>();
     @JsonProperty("servings")
-    private Integer servings;
+    private int servings;
     @JsonProperty("image")
     private String image;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    /**
+     * No args constructor for use in serialization
+     * 
+     */
+    public RecipeModel() {
+    }
+
+    /**
+     * 
+     * @param ingredientModels
+     * @param id
+     * @param servings
+     * @param name
+     * @param image
+     * @param stepModels
+     */
+    public RecipeModel(int id, String name, List<IngredientModel> ingredientModels, List<StepModel> stepModels, int servings, String image) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.ingredientModels = ingredientModels;
+        this.stepModels = stepModels;
+        this.servings = servings;
+        this.image = image;
+    }
+
     @JsonProperty("id")
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -64,32 +92,32 @@ public class Recipe {
     }
 
     @JsonProperty("ingredients")
-    public List<Ingredient> getIngredients() {
-        return ingredients;
+    public List<IngredientModel> getIngredientModels() {
+        return ingredientModels;
     }
 
     @JsonProperty("ingredients")
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+    public void setIngredientModels(List<IngredientModel> ingredientModels) {
+        this.ingredientModels = ingredientModels;
     }
 
     @JsonProperty("steps")
-    public List<Step> getSteps() {
-        return steps;
+    public List<StepModel> getStepModels() {
+        return stepModels;
     }
 
     @JsonProperty("steps")
-    public void setSteps(List<Step> steps) {
-        this.steps = steps;
+    public void setStepModels(List<StepModel> stepModels) {
+        this.stepModels = stepModels;
     }
 
     @JsonProperty("servings")
-    public Integer getServings() {
+    public int getServings() {
         return servings;
     }
 
     @JsonProperty("servings")
-    public void setServings(Integer servings) {
+    public void setServings(int servings) {
         this.servings = servings;
     }
 
@@ -111,6 +139,11 @@ public class Recipe {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("name", name).append("ingredients", ingredientModels).append("steps", stepModels).append("servings", servings).append("image", image).append("additionalProperties", additionalProperties).toString();
     }
 
 }
