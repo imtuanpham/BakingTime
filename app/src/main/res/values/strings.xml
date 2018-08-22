@@ -4,9 +4,11 @@
 
     <string name="ingredients_label">Ingredients</string>
 
+    <string name="appwidget_title">@string/app_name</string>
     <string name="appwidget_text">Please Choose a Recipe First</string>
 
     <string name="add_to_widget">Add To Widget</string>
+    <string name="added_to_widget">Ingredient List Added To Widget</string>
 
     <string name="step_thumbnail_content_description">Step Thumbnail</string>
 </resources>

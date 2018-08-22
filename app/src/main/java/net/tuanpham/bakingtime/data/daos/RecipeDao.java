@@ -26,6 +26,9 @@ public interface RecipeDao {
     @Query("SELECT * from recipe ORDER BY recipe_id ASC")
     LiveData<List<Recipe>> getAllRecipes();
 
+    @Query("SELECT * from recipe WHERE recipe_id = :recipeId")
+    LiveData<Recipe> getRecipe(int recipeId);
+
     @Query("SELECT count(*) rec_count from recipe")
     int getRecipeCount();
 }

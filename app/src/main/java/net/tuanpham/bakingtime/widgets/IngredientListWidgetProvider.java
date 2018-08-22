@@ -20,6 +20,7 @@ public class IngredientListWidgetProvider extends AppWidgetProvider {
     private final String LOG_TAG = IngredientListWidgetProvider.class.getSimpleName();
 
     private int mRecipeId = -1;
+    private String mRecipeName;
     private String mIngredientListDisplay;
 
     @Override
@@ -46,7 +47,9 @@ public class IngredientListWidgetProvider extends AppWidgetProvider {
         } else {
             intent = new Intent(context, RecipeActivity.class);
             intent.putExtra(RecipeViewModel.RECIPE_ID, mRecipeId);
+            intent.putExtra(RecipeViewModel.RECIPE_NAME, mRecipeName);
             views.setTextViewText(R.id.tv_widget_ingredient_list, mIngredientListDisplay);
+            views.setTextViewText(R.id.tv_widget_recipe_name, mRecipeName);
         }
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
@@ -63,6 +66,11 @@ public class IngredientListWidgetProvider extends AppWidgetProvider {
         if(intent.hasExtra(RecipeViewModel.RECIPE_ID)) {
             mRecipeId = intent.getIntExtra(RecipeViewModel.RECIPE_ID, -1);
             Log.d(LOG_TAG, "recipeID " + String.valueOf(mRecipeId));
+        }
+
+        if(intent.hasExtra(RecipeViewModel.RECIPE_NAME)) {
+            mRecipeName = intent.getStringExtra(RecipeViewModel.RECIPE_NAME);
+            Log.d(LOG_TAG, "recipeName " + mRecipeName);
         }
 
         if(intent.hasExtra(IngredientViewModel.INGREDIENT_LIST)) {

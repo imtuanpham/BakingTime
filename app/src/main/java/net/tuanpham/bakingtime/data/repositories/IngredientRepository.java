@@ -11,20 +11,15 @@ import java.util.List;
 
 public class IngredientRepository {
 
-    private int mRecipeId;
     private IngredientDao mIngredientDao;
-    private LiveData<List<Ingredient>> mRecipeIngredients;
 
     public IngredientRepository(Application application) {
         BakingRoomDatabase db = BakingRoomDatabase.getDatabase(application);
         mIngredientDao = db.ingredientDao();
     }
 
-    public void selectRecipeId(int recipeId) {
-        mRecipeIngredients = mIngredientDao.getRecipeIngredients(recipeId);
-    }
 
-    public LiveData<List<Ingredient>> getRecipeIngredients() {
-        return mRecipeIngredients;
+    public LiveData<List<Ingredient>> getRecipeIngredients(int recipeId) {
+        return mIngredientDao.getRecipeIngredients(recipeId);
     }
 }

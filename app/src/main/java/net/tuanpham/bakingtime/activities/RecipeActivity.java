@@ -18,6 +18,7 @@ public class RecipeActivity extends AppCompatActivity
 
     private final String LOG_TAG = RecipeActivity.class.getSimpleName();
     private int mRecipeId;
+    private String mRecipeName;
 
     // Track whether to display a two-pane or single-pane UI
     // A single-pane display refers to phone screens, and two-pane to larger tablet screens
@@ -47,6 +48,10 @@ public class RecipeActivity extends AppCompatActivity
         if (mRecipeId == -1) {
             finish(); return;
         }
+
+        mRecipeName = intent.getStringExtra(RecipeViewModel.RECIPE_NAME);
+        if (mRecipeName != null)
+            this.setTitle(mRecipeName);
 
         // pass recipe ID from activity to fragment
         Bundle bundle = new Bundle();
@@ -145,6 +150,7 @@ public class RecipeActivity extends AppCompatActivity
     private void launchIngredientListActivity() {
         Intent intent = new Intent(this, IngredientListActivity.class);
         intent.putExtra(RecipeViewModel.RECIPE_ID, mRecipeId);
+        intent.putExtra(RecipeViewModel.RECIPE_NAME, mRecipeName);
         startActivity(intent);
     }
 

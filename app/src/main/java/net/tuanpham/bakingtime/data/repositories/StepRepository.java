@@ -12,27 +12,17 @@ import java.util.List;
 public class StepRepository {
 
     private StepDao mStepDao;
-    private LiveData<List<Step>> mRecipeSteps;
-    private LiveData<Step> mStep;
 
     public StepRepository(Application application) {
         BakingRoomDatabase db = BakingRoomDatabase.getDatabase(application);
         mStepDao = db.stepDao();
     }
 
-    public void selectRecipeId(int recipeId) {
-        mRecipeSteps = mStepDao.getRecipeSteps(recipeId);
+    public LiveData<List<Step>> getRecipeSteps(int recipeId) {
+        return mStepDao.getRecipeSteps(recipeId);
     }
 
-    public void selectStep(int stepId) {
-        mStep = mStepDao.getStep(stepId);
-    }
-
-    public LiveData<List<Step>> getRecipeSteps() {
-        return mRecipeSteps;
-    }
-
-    public LiveData<Step> getSelectedStep() {
-        return mStep;
+    public LiveData<Step> getStep(int stepId) {
+        return mStepDao.getStep(stepId);
     }
 }

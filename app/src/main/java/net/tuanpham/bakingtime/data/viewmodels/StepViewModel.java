@@ -16,9 +16,6 @@ public class StepViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> selectedStepId = new MutableLiveData<>();
 
     private StepRepository mRepository;
-    private int mRecipeId;
-
-    private LiveData<List<Step>> mRecipeSteps;
 
     public StepViewModel(Application application) {
         super(application);
@@ -34,17 +31,10 @@ public class StepViewModel extends AndroidViewModel {
     }
 
     public LiveData<Step> getStep(int stepId) {
-        mRepository.selectStep(stepId);
-        return mRepository.getSelectedStep();
+        return mRepository.getStep(stepId);
     }
 
-    public void selectRecipeId(int recipeId) {
-        mRecipeId = recipeId;
-        mRepository.selectRecipeId(mRecipeId);
-        mRecipeSteps = mRepository.getRecipeSteps();
-    }
-
-    public LiveData<List<Step>> getRecipeSteps() {
-        return mRecipeSteps;
+    public LiveData<List<Step>> getRecipeSteps(int recipeId) {
+        return mRepository.getRecipeSteps(recipeId);
     }
 }

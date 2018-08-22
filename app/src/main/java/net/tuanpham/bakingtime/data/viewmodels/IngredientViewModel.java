@@ -14,20 +14,13 @@ public class IngredientViewModel extends AndroidViewModel {
     public final static String INGREDIENT_LIST = "INGREDIENT_LIST";
 
     private IngredientRepository mRepository;
-    private int mRecipeId;
 
-    private LiveData<List<Ingredient>> mRecipeIngredients;
-
-    public IngredientViewModel(Application application, int id) {
+    public IngredientViewModel(Application application) {
         super(application);
-        mRecipeId = id;
-
         mRepository = new IngredientRepository(application);
-        mRepository.selectRecipeId(mRecipeId);
-        mRecipeIngredients = mRepository.getRecipeIngredients();
     }
 
-    public LiveData<List<Ingredient>> getRecipeIngredients() {
-        return mRecipeIngredients;
+    public LiveData<List<Ingredient>> getRecipeIngredients(int recipeId) {
+        return mRepository.getRecipeIngredients(recipeId);
     }
 }

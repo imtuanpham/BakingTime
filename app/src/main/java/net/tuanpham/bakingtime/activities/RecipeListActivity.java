@@ -53,13 +53,14 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListA
     }
 
     @Override
-    public void onRecipeClick(int recipeId) {
-        launchRecipeActivity(recipeId);
+    public void onRecipeClick(Recipe recipe) {
+        launchRecipeActivity(recipe);
     }
 
-    private void launchRecipeActivity(int recipeId) {
+    private void launchRecipeActivity(Recipe recipe) {
         Intent intent = new Intent(this, RecipeActivity.class);
-        intent.putExtra(RecipeViewModel.RECIPE_ID, recipeId);
+        intent.putExtra(RecipeViewModel.RECIPE_ID, recipe.getRecipeId());
+        intent.putExtra(RecipeViewModel.RECIPE_NAME, recipe.getName());
         startActivity(intent);
     }
 }

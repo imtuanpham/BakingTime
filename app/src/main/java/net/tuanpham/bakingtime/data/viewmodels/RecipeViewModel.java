@@ -12,18 +12,20 @@ import java.util.List;
 public class RecipeViewModel extends AndroidViewModel {
 
     public static final String RECIPE_ID = "recipe_id";
+    public static final String RECIPE_NAME = "recipe_name";
 
     private RecipeRepository mRepository;
-
-    private LiveData<List<Recipe>> mAllRecipes;
 
     public RecipeViewModel(Application application) {
         super(application);
         mRepository = new RecipeRepository(application);
-        mAllRecipes = mRepository.getAllRecipes();
     }
 
     public LiveData<List<Recipe>> getAllRecipes() {
-        return mAllRecipes;
+        return mRepository.getAllRecipes();
+    }
+
+    public LiveData<Recipe> getRecipe(int recipeId) {
+        return mRepository.getRecipe(recipeId);
     }
 }

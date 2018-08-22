@@ -77,9 +77,7 @@ public class RecipeFragment extends Fragment implements StepListAdapter.OnStepCl
         rvStepList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         mStepViewModel = ViewModelProviders.of(this.getActivity()).get(StepViewModel.class);
-        mStepViewModel.selectRecipeId(mRecipeId);
-
-        mStepViewModel.getRecipeSteps().observe(this, new Observer<List<Step>>() {
+        mStepViewModel.getRecipeSteps(mRecipeId).observe(this, new Observer<List<Step>>() {
             @Override
             public void onChanged(@Nullable final List<Step> steps) {
                 // Update the cached copy of the steps in the adapter.

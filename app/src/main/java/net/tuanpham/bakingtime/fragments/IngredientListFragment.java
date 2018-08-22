@@ -18,12 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import net.tuanpham.bakingtime.R;
 import net.tuanpham.bakingtime.adapters.IngredientListAdapter;
 import net.tuanpham.bakingtime.data.entities.Ingredient;
+import net.tuanpham.bakingtime.data.entities.Recipe;
 import net.tuanpham.bakingtime.data.viewmodels.IngredientViewModel;
-import net.tuanpham.bakingtime.data.viewmodels.IngredientViewModelFactory;
 import net.tuanpham.bakingtime.data.viewmodels.RecipeViewModel;
 import net.tuanpham.bakingtime.widgets.IngredientListWidgetProvider;
 
@@ -34,8 +35,10 @@ public class IngredientListFragment extends Fragment implements IngredientListAd
     private final String LOG_TAG = IngredientListFragment.class.getSimpleName();
 
     private IngredientViewModel mIngredientViewModel;
+    private RecipeViewModel mRecipeViewModel;
     private int mRecipeId;
     private String mIngredientListDisplay;
+    private Recipe mRecipe;
 
     // Mandatory empty constructor
     public IngredientListFragment() {
@@ -59,15 +62,23 @@ public class IngredientListFragment extends Fragment implements IngredientListAd
         rvIngredientList.setAdapter(adapter);
         rvIngredientList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        mIngredientViewModel = ViewModelProviders
-                .of(this.getActivity(), new IngredientViewModelFactory(this.getActivity().getApplication(), mRecipeId))
-                .get(IngredientViewModel.class);
-        mIngredientViewModel.getRecipeIngredients().observe(this, new Observer<List<Ingredient>>() {
+        mIngredientViewModel = ViewModelProviders.of(this.getActivity()).get(IngredientViewModel.class);
+
+        mIngredientViewModel.getRecipeIngredients(mRecipeId).observe(this, new Observer<List<Ingredient>>() {
             @Override
             public void onChanged(@Nullable final List<Ingredient> ingredients) {
                 // Update the cached copy of the ingredients in the adapter.
                 adapter.setIngredients(ingredients);
                 mIngredientListDisplay = getIngredientListDisplay(ingredients);
+            }
+        });
+
+        mRecipeViewModel = ViewModelProviders.of(this.getActivity()).get(RecipeViewModel.class);
+
+        mRecipeViewModel.getRecipe(mRecipeId).observe(this, new Observer<Recipe>() {
+            @Override
+            public void onChanged(@Nullable final Recipe recipe) {
+                mRecipe = recipe;
             }
         });
 
@@ -77,6 +88,7 @@ public class IngredientListFragment extends Fragment implements IngredientListAd
                     @Override
                     public void onClick(View v) {
                         updateWidget();
+                        Toast.makeText(getContext(), R.string.added_to_widget, Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -98,6 +110,7 @@ public class IngredientListFragment extends Fragment implements IngredientListAd
 
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         intent.putExtra(RecipeViewModel.RECIPE_ID, mRecipeId);
+        intent.putExtra(RecipeViewModel.RECIPE_NAME, mRecipe.getName());
         intent.putExtra(IngredientViewModel.INGREDIENT_LIST, mIngredientListDisplay);
         thisActivity.sendBroadcast(intent);
     }

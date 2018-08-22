@@ -12,6 +12,7 @@ import net.tuanpham.bakingtime.fragments.IngredientListFragment;
 public class IngredientListActivity extends AppCompatActivity {
 
     private int mRecipeId;
+    private String mRecipeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,11 @@ public class IngredientListActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        mRecipeName = intent.getStringExtra(RecipeViewModel.RECIPE_NAME);
+        if (mRecipeName != null)
+            this.setTitle(mRecipeName);
+
 
         // pass recipe ID from activity to fragment
         Bundle bundle = new Bundle();
