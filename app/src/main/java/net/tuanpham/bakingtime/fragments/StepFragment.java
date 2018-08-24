@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -36,15 +37,19 @@ import net.tuanpham.bakingtime.data.viewmodels.StepViewModel;
 public class StepFragment extends Fragment {
 
     private final String LOG_TAG = StepFragment.class.getSimpleName();
+    private final static String PLAYER_CURRENT_POSITION = "PLAYER_CURRENT_POSITION";
+    private final static String PLAYER_PLAY_WHEN_READY = "PLAYER_PLAY_WHEN_READY";
 
     private StepViewModel mStepViewModel;
     private Step mStep;
 
     private TextView mStepDescription;
-//    private ImageView mStepThumbnail;
 
+    private Uri mVideoURI;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
+    private long mPlayerCurrentPosition;
+    private boolean mPlayerPlayWhenReady;
 
     // Mandatory empty constructor
     public StepFragment() {
@@ -60,11 +65,18 @@ public class StepFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreateView");
+
+        if(savedInstanceState != null) {
+            mPlayerCurrentPosition = savedInstanceState.getLong(PLAYER_CURRENT_POSITION);
+            mPlayerPlayWhenReady = savedInstanceState.getBoolean(PLAYER_PLAY_WHEN_READY);
+        } else {
+            mPlayerCurrentPosition = 0;
+            mPlayerPlayWhenReady = true;
+        }
 
         final View rootView = inflater.inflate(R.layout.fragment_step, container, false);
         mStepDescription = (TextView) rootView.findViewById(R.id.tv_step_description);
-
-//        mStepThumbnail = (ImageView) rootView.findViewById(R.id.iv_step_thumbnail);
 
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
@@ -87,6 +99,7 @@ public class StepFragment extends Fragment {
         mStepViewModel.getStep(stepId).observe(this, new Observer<Step>() {
             @Override
             public void onChanged(@Nullable final Step step) {
+                Log.d(LOG_TAG, "getStep onChanged");
                 mStep = step;
                 populateData();
             }
@@ -95,27 +108,14 @@ public class StepFragment extends Fragment {
 
     private void populateData() {
         mStepDescription.setText(mStep.getDescription());
-        String thumbnailURL = mStep.getThumbnailURL().trim();
-
-//        if(!thumbnailURL.isEmpty()) {
-//            Log.d(LOG_TAG, "thumbnail: " + thumbnailURL);
-//            Picasso.with(this.getContext())
-//                    .load(thumbnailURL)
-//                    .into(mStepThumbnail);
-//        } else {
-//            mStepThumbnail.setVisibility(View.INVISIBLE);
-//        }
-
         String videoURL = mStep.getVideoURL().trim();
-        if(!videoURL.isEmpty()) {
-            Log.d(LOG_TAG, "thumbnail: " + videoURL);
-            mPlayerView.setVisibility(View.VISIBLE);
-            // Initialize the player.
-            initializePlayer(Uri.parse(videoURL));
+        if (!videoURL.isEmpty()) {
+            mVideoURI = Uri.parse(videoURL);
         } else {
+            mVideoURI = null;
             mPlayerView.setVisibility(View.INVISIBLE);
-            releasePlayer();
         }
+        initializePlayer();
     }
 
 
@@ -123,10 +123,9 @@ public class StepFragment extends Fragment {
 
     /**
      * Initialize ExoPlayer.
-     * @param mediaUri The URI of the sample to play.
      */
-    private void initializePlayer(Uri mediaUri) {
-        if (mExoPlayer == null) {
+    private void initializePlayer() {
+        if (mExoPlayer == null && mVideoURI != null) {
 
             // Create an instance of the ExoPlayer.
             // Measures bandwidth during playback. Can be null if not required.
@@ -148,12 +147,15 @@ public class StepFragment extends Fragment {
 
             // This is the MediaSource representing the media to be played.
             MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(mediaUri);
+                    .createMediaSource(mVideoURI);
 
             // Prepare the player with the source.
             mExoPlayer.prepare(videoSource);
 
-            mExoPlayer.setPlayWhenReady(true);
+            Log.d(LOG_TAG, "saved current position: " + String.valueOf(mPlayerCurrentPosition));
+
+            mExoPlayer.seekTo(mPlayerCurrentPosition);
+            mExoPlayer.setPlayWhenReady(mPlayerPlayWhenReady);
         }
     }
 
@@ -171,9 +173,79 @@ public class StepFragment extends Fragment {
         mExoPlayer = null;
     }
 
+    /**
+     * Save ExoPlayer State.
+     */
+    private void savePlayerState() {
+        // if the player doesn't exist, there is no need to save state
+        if(mExoPlayer == null)
+            return;
+
+        Log.d(LOG_TAG, "saving current position: " + String.valueOf(mPlayerCurrentPosition));
+
+        mPlayerCurrentPosition = mExoPlayer.getCurrentPosition();
+        mPlayerPlayWhenReady = mExoPlayer.getPlayWhenReady();
+
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(LOG_TAG, "onPause");
+        super.onPause();
+
+        // save player state
+        savePlayerState();
+
+        if (Util.SDK_INT <= 23) {
+            // release player
+            releasePlayer();
+        }
+    }
+
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(LOG_TAG, "onSaveInstanceState");
+        outState.putLong(PLAYER_CURRENT_POSITION, mPlayerCurrentPosition);
+        outState.putBoolean(PLAYER_PLAY_WHEN_READY, mPlayerPlayWhenReady);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(LOG_TAG, "onStop");
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            // release player
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        Log.d(LOG_TAG, "onStart");
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            // initialize player
+            initializePlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(LOG_TAG, "onResume");
+        super.onResume();
+        if ((Util.SDK_INT <= 23)) {
+            // initialize player
+            initializePlayer();
+        }
     }
 }
